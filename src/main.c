@@ -222,7 +222,7 @@ char *get_text(void) {
   return input_text;
 }
 
-void print_help() {
+void print_help(void) {
   printf("Usage: textwal [OPTIONS] < input_text.txt\n");
   printf("\nOptions:\n");
   printf("  -f, --font <path>           Path to the font file (e.g., /path/to/font.ttf)\n");
