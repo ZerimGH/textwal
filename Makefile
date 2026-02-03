@@ -7,15 +7,11 @@ CC = gcc
 CFLAGS = -Wall -Wextra -pedantic
 CINCLUDES = -I./freetype/include -I ./stb
 
-FREETYPE_DIR = ./freetype
-FREETYPE_LIB_DIR = $(FREETYPE_DIR)/build/lib
-FREETYPE_INCLUDE_DIR = $(FREETYPE_DIR)/include
-
 $(OUT_DIR):
 	mkdir -p $(OUT_DIR)
 
 $(OUT): $(SRCS) $(HDRS) $(OUT_DIR)
-	$(CC) $(SRCS) -o $(OUT) $(CFLAGS) $(CINCLUDES) -L$(FREETYPE_LIB_DIR)
+	$(CC) $(SRCS) -o $(OUT) $(CFLAGS) $(CINCLUDES) -lfreetype
 
 all: $(OUT)
 

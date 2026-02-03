@@ -96,11 +96,11 @@ int render_text_to_image(const char *text, Options options) {
     FT_Done_FreeType(ft);
     return 1;
   }
-  char *line = strtok(text_copy, "\n");
 
   // Render text
   int y = y_start;
   int x = x_start;
+  char *line = strtok(text_copy, "\n");
   while(line) {
     for(int i = 0; line[i] != '\0'; i++) {
       FT_UInt glyph_index = FT_Get_Char_Index(face, line[i]);
