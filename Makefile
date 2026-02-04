@@ -15,9 +15,8 @@ $(OUT): $(SRCS) $(HDRS) $(OUT_DIR)
 
 all: $(OUT)
 
-run: $(OUT)
-	$(OUT) < example.txt
-	feh output.png
+install: $(OUT)
+	sudo cp $(OUT) /usr/local/bin/textwal
 
 clean:
 	rm -rf $(OUT_DIR)
