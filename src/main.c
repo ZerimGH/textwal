@@ -30,6 +30,11 @@ typedef enum {
   TA_BottomLeft
 } TextAlign;
 
+typedef enum {
+  CA_Left,
+  CA_Right
+} CharAlign;
+
 typedef unsigned char color[3];
 
 typedef struct {
@@ -40,6 +45,7 @@ typedef struct {
   color bg_color;
   color txt_color;
   TextAlign text_align;
+  CharAlign char_align;
 } Options;
 
 int render(const char *text, Options options) {
@@ -107,13 +113,16 @@ int render(const char *text, Options options) {
   int y_start = (options.image_h - total_height) / 2 + (face->size->metrics.ascender >> 6);
   int x_start = (options.image_w - total_width) / 2;
 
+  int la = options.char_align == CA_Left;
+  int la_off = total_width - options.font_size;
+
   // Calculate starting x and y positions
   switch(options.text_align) {
     case TA_Left:
-      x_start = 0;
+      x_start = 0 + la_off * la;
       break;
     case TA_Right:
-      x_start = options.image_w - total_width;
+      x_start = options.image_w - total_width + la_off * la;
       break;
     case TA_Top:
       y_start = face->size->metrics.ascender >> 6;
@@ -127,15 +136,15 @@ int render(const char *text, Options options) {
       break;
     case TA_TopRight:
       y_start = face->size->metrics.ascender >> 6;
-      x_start = options.image_w - total_width;
+      x_start = options.image_w - total_width + la_off * la;
       break;
     case TA_BottomLeft:
       y_start = options.image_h - total_height + (face->size->metrics.ascender >> 6); 
-      x_start = 0;
+      x_start = 0 + la_off * la;
       break;
     case TA_BottomRight:
       y_start = options.image_h - total_height + (face->size->metrics.ascender >> 6); 
-      x_start = options.image_w - total_width;
+      x_start = options.image_w - total_width + la_off * la;
       break;
     default: break;
   }
@@ -205,7 +214,7 @@ int render(const char *text, Options options) {
   return 0;
 }
 
-TextAlign parse_align(char *s) {
+TextAlign parse_text_align(char *s) {
   if(!s) return -1;
   if(strcmp(s, "centre") == 0) return TA_Centre;
   if(strcmp(s, "top") == 0) return TA_Top;
@@ -216,6 +225,13 @@ TextAlign parse_align(char *s) {
   if(strcmp(s, "top-right") == 0) return TA_TopRight;
   if(strcmp(s, "bottom-left") == 0) return TA_BottomLeft;
   if(strcmp(s, "bottom-right") == 0) return TA_BottomRight;
+  return -1;
+}
+
+CharAlign parse_char_align(char *s) {
+  if(!s) return -1;
+  if(strcmp(s, "left") == 0) return CA_Left;
+  if(strcmp(s, "right") == 0) return CA_Right;
   return -1;
 }
 
@@ -230,14 +246,19 @@ int parse_options(Options *out, int argc, char *argv[]) {
     {"width", required_argument, NULL, 'w'},
     {"height", required_argument, NULL, 'h'},
     {"output", required_argument, NULL, 'o'},
+    {"text-align", required_argument, NULL, 'A'},
+    {"char-align", required_argument, NULL, 'a'},
     {"help", no_argument, NULL, 1},
     {NULL, 0, NULL, 0}};
 
   int opt;
-  while((opt = getopt_long(argc, argv, "f:b:t:s:w:h:o:A:", long_options, NULL)) != -1) {
+  while((opt = getopt_long(argc, argv, "f:b:t:s:w:h:o:A:a:", long_options, NULL)) != -1) {
     switch(opt) {
       case 'A':
-        out->text_align = parse_align(optarg);
+        out->text_align = parse_text_align(optarg);
+        break;
+      case 'a':
+        out->char_align = parse_char_align(optarg);
         break;
       case 'f':
         out->font_path = optarg;
