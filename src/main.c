@@ -115,6 +115,7 @@ int render(const char *text, Options options) {
 
   int la = options.char_align == CA_Left;
   int la_off = total_width - options.font_size;
+  int dir = options.char_align == CA_LEFT ? -1 : 1;
 
   // Calculate starting x and y positions
   switch(options.text_align) {
@@ -193,7 +194,7 @@ int render(const char *text, Options options) {
         }
       }
 
-      x += face->glyph->advance.x >> 6;
+      x += (face->glyph->advance.x >> 6) * dir;
     }
 
     // Next line
@@ -338,6 +339,7 @@ void print_help(void) {
   printf("  -w, --width <width>         Image width (default: %d)\n", DEFAULT_WIDTH);
   printf("  -h, --height <height>       Image height (default: %d)\n", DEFAULT_HEIGHT);
   printf("  -A, --text-align <height>   Text box alignment(values: centre, top, bottom, left, right, top-left, top-right, bottom-left, bottom-right)\n");
+  printf("  -A, --char-align <height>   Character alignment within text box (values: left, right)\n");
   printf("  --help                      Show this help message\n");
 }
 
