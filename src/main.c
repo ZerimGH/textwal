@@ -104,7 +104,7 @@ int render(const char *text, Options options) {
       goto bg_err;
     }
 
-    stbir_resize_uint8_linear(img, img_w, img_h, 0, buf, options.image_w, options.image_h, 0, STBIR_RGB};
+    stbir_resize_uint8_linear(img, img_w, img_h, 0, buf, options.image_w, options.image_h, 0, STBIR_RGB);
 
     stbi_image_free(img);
   }
