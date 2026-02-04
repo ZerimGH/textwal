@@ -113,9 +113,9 @@ int render(const char *text, Options options) {
   int y_start = (options.image_h - total_height) / 2 + (face->size->metrics.ascender >> 6);
   int x_start = (options.image_w - total_width) / 2;
 
-  int ra = options.char_align == CA_Left;
+  int ra = options.char_align == CA_Right;
   int ra_off = total_width - options.font_size;
-  int dir = options.char_align == CA_Left ? -1 : 1;
+  int dir = options.char_align == CA_Right ? -1 : 1;
 
   // Calculate starting x and y positions
   switch(options.text_align) {
