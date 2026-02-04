@@ -95,20 +95,18 @@ int render(const char *text, Options options) {
 
   // Background image
   if(options.bg_img) {
-    if (options.bg_img) {
-      int img_w, img_h, img_channels;
+    int img_w, img_h, img_channels;
 
-      unsigned char *img = stbi_load(options.bg_img, &img_w, &img_h, &img_channels, 3);
+    unsigned char *img = stbi_load(options.bg_img, &img_w, &img_h, &img_channels, 3);
 
-      if (!img) {
-        PERROR("Failed to load background image %s. Defaulting to solid color\n", options.bg_img);
-        goto bg_err;
-      }
-
-      stbir_resize_uint8_linear(img, img_w, img_h, 0, buf, options.image_w, options.image_h, 0, (stbir_pixel_layout)3);
-
-      stbi_image_free(img);
+    if (!img) {
+      PERROR("Failed to load background image %s. Defaulting to solid color\n", options.bg_img);
+      goto bg_err;
     }
+
+    stbir_resize_uint8_linear(img, img_w, img_h, 0, buf, options.image_w, options.image_h, 0, STBIR_RGB};
+
+    stbi_image_free(img);
   }
 bg_err:
 
