@@ -206,6 +206,7 @@ int parse_options(Options *out, int argc, char *argv[]) {
 char *get_text(void) {
   size_t alloced = 1024;
   char *input_text = malloc(sizeof(char) * alloced);
+  printf("%p\n", (void *)input_text);
   if(!input_text) {
     PERROR("malloc() failed.\n");
     return NULL;
@@ -215,6 +216,7 @@ char *get_text(void) {
   char c;
   while((c = getchar()) && c != EOF) {
     if(written + 1 >= alloced) {
+      printf("RESIZEING\n");
       alloced *= 2;
       char *new = realloc(input_text, sizeof(char) * alloced);
       if(!new) {
