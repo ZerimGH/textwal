@@ -70,20 +70,25 @@ int render(const char *text, Options options) {
 
   // Calculate total height and width of text rendered
   int total_height = 0;
-  int total_width = 0;
-  int max_line_len = 0;
-  int cur_line_len = 0;
+  int max_width = 0;
+  int cur_width = 0;
+
+  total_height = (face->size->metrics.height >> 6);
+
   for(int i = 0; text[i]; i++) {
     if(text[i] == '\n') {
       total_height += (face->size->metrics.height >> 6);
-      if(cur_line_len > max_line_len) max_line_len = cur_line_len;
-      cur_line_len = 0;
+      if(cur_width > max_width) max_width = cur_width;
+      cur_width = 0;
     } else {
-      cur_line_len++;
+      if (FT_Load_Char(face, text[i], FT_LOAD_DEFAULT)) continue;
+      cur_width += (face->glyph->advance.x >> 6);
     }
   }
-  if(cur_line_len > max_line_len) max_line_len = cur_line_len;
-  total_width = max_line_len * options.font_size / 2;
+
+  if(cur_width > max_width) max_width = cur_width;
+  int total_width = max_width;
+
 
   // Calculate starting x and y positions
   // int y_start = (options.image_h - total_height) / 2;
