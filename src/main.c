@@ -113,17 +113,17 @@ int render(const char *text, Options options) {
   int y_start = (options.image_h - total_height) / 2 + (face->size->metrics.ascender >> 6);
   int x_start = (options.image_w - total_width) / 2;
 
-  int la = options.char_align == CA_Left;
-  int la_off = total_width - options.font_size;
+  int ra = options.char_align == CA_Left;
+  int ra_off = total_width - options.font_size;
   int dir = options.char_align == CA_Left ? -1 : 1;
 
   // Calculate starting x and y positions
   switch(options.text_align) {
     case TA_Left:
-      x_start = 0 + la_off * la;
+      x_start = 0 + ra_off * ra;
       break;
     case TA_Right:
-      x_start = options.image_w - total_width + la_off * la;
+      x_start = options.image_w - total_width + ra_off * ra;
       break;
     case TA_Top:
       y_start = face->size->metrics.ascender >> 6;
@@ -137,15 +137,15 @@ int render(const char *text, Options options) {
       break;
     case TA_TopRight:
       y_start = face->size->metrics.ascender >> 6;
-      x_start = options.image_w - total_width + la_off * la;
+      x_start = options.image_w - total_width + ra_off * ra;
       break;
     case TA_BottomLeft:
       y_start = options.image_h - total_height + (face->size->metrics.ascender >> 6); 
-      x_start = 0 + la_off * la;
+      x_start = 0 + ra_off * ra;
       break;
     case TA_BottomRight:
       y_start = options.image_h - total_height + (face->size->metrics.ascender >> 6); 
-      x_start = options.image_w - total_width + la_off * la;
+      x_start = options.image_w - total_width + ra_off * ra;
       break;
     default: break;
   }
