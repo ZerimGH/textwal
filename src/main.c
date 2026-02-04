@@ -115,7 +115,7 @@ int render(const char *text, Options options) {
 
   int la = options.char_align == CA_Left;
   int la_off = total_width - options.font_size;
-  int dir = options.char_align == CA_LEFT ? -1 : 1;
+  int dir = options.char_align == CA_Left ? -1 : 1;
 
   // Calculate starting x and y positions
   switch(options.text_align) {
