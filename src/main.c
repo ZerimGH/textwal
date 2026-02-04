@@ -28,7 +28,7 @@ typedef struct {
   color txt_color;
 } Options;
 
-int render_text_to_image(const char *text, Options options) {
+int render(const char *text, Options options) {
   FT_Library ft;
   FT_Face face;
 
@@ -262,7 +262,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  if(render_text_to_image(input_text, options)) {
+  if(render(input_text, options)) {
     PERROR("Failed to render image.\n");
     free(input_text);
     return 1;
