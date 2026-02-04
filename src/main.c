@@ -116,7 +116,7 @@ int render(const char *text, Options options) {
       x_start = options.image_w - total_width;
       break;
     case TA_Top:
-      y_start = 0;
+      y_start = face->size->metrics.ascender >> 6;
       break;
     case TA_Bottom:
       y_start = options.image_h - total_height;
