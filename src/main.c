@@ -225,6 +225,10 @@ char *get_text(void) {
     }
     input_text[written++] = c;
   }
+  if(written = 0) {
+    free(input_text);
+    return NULL;
+  }
   input_text[written] = '\0';
   return input_text;
 }

@@ -4,7 +4,7 @@ OUT_DIR = ./build
 OUT = $(OUT_DIR)/textwal
 
 CC = gcc
-CFLAGS = -Wall -Wextra -pedantic
+CFLAGS = -Wall -Wextra -pedantic -O3 
 CINCLUDES = -I./freetype/include -I ./stb
 
 $(OUT_DIR):
