@@ -164,8 +164,9 @@ int render(const char *text, Options options) {
   int x = x_start;
   char *line = strtok(text_copy, "\n");
   while(line) {
+    size_t line_len = strlen(line);
     for(int i = 0; line[i] != '\0'; i++) {
-      FT_UInt glyph_index = FT_Get_Char_Index(face, line[i]);
+      FT_UInt glyph_index = FT_Get_Char_Index(face, line[al ? line_len - 1 - i : i]);
 
       if(FT_Load_Glyph(face, glyph_index, FT_LOAD_RENDER | FT_LOAD_NO_HINTING)) {
         continue;
