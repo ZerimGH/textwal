@@ -218,7 +218,7 @@ int parse_options(Options *out, int argc, char *argv[]) {
     {NULL, 0, NULL, 0}};
 
   int opt;
-  while((opt = getopt_long(argc, argv, "f:b:t:s:w:h:o:a:", long_options, NULL)) != -1) {
+  while((opt = getopt_long(argc, argv, "f:b:t:s:w:h:o:A:", long_options, NULL)) != -1) {
     switch(opt) {
       case 'a':
         out->text_align = parse_align(optarg);
