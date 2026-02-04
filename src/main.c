@@ -207,8 +207,6 @@ char *get_text(void) {
   size_t alloced = 1024;
   char *input_text = malloc(sizeof(char) * alloced);
 
-  printf("%p\n", (void *)input_text);
-
   if (!input_text) {
     PERROR("malloc() failed.\n");
     return NULL;
@@ -218,9 +216,7 @@ char *get_text(void) {
   char c;
 
   while ((c = getchar()) && c != EOF) {
-    printf("%c", c);
     if (written + 1 >= alloced) {
-      printf("RESIZING\n");
       alloced *= 2;
       char *new = realloc(input_text, sizeof(char) * alloced);
       if (!new) {
@@ -278,11 +274,12 @@ int main(int argc, char *argv[]) {
 
   // Get text and render
   char *input_text = get_text();
-  printf("TEXT TO RENDER:\n%s\n", input_text);
   if(!input_text) {
     PERROR("Failed to get input text from stdin.\n");
     return 1;
   }
+
+  printf("Rendering text:\n%s\n", input_text);
 
   if(render(input_text, options)) {
     PERROR("Failed to render image.\n");
