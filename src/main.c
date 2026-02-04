@@ -75,7 +75,7 @@ int render(const char *text, Options options) {
   int cur_line_len = 0;
   for(int i = 0; text[i]; i++) {
     if(text[i] == '\n') {
-      total_height += options.font_size;
+      total_height += (face->size->metrics.height >> 6);
       if(cur_line_len > max_line_len) max_line_len = cur_line_len;
       cur_line_len = 0;
     } else {
@@ -85,7 +85,8 @@ int render(const char *text, Options options) {
   total_width = max_line_len * options.font_size / 2;
 
   // Calculate starting x and y positions
-  int y_start = (options.image_h - total_height) / 2;
+  // int y_start = (options.image_h - total_height) / 2;
+  int y_start = (options.image_h - total_height) / 2 + (face->size->metrics.ascender >> 6);
   int x_start = (options.image_w - total_width) / 2;
 
   char *text_copy = strdup(text);
@@ -117,11 +118,17 @@ int render(const char *text, Options options) {
         for(int col = 0; col < bitmap->width; col++) {
           unsigned char pixel_value = bitmap->buffer[row * bitmap->width+ col];
           if(pixel_value) {
-            int pixel_pos = ((glyph_baseline_y - (bitmap->rows - 1 - row)) * options.image_w + (x + col)) * 3;
+            int pixel_x =  x + col;
+            int pixel_y = (glyph_baseline_y - (bitmap->rows - 1 - row));
+            if(pixel_x >= options.image_w || pixel_x < 0) continue;
+            if(pixel_y >= options.image_h || pixel_y < 0) continue;
 
-            buf[pixel_pos + 0] = (options.txt_color[0] * pixel_value + buf[pixel_pos + 0] * (255 - pixel_value)) / 255;
-            buf[pixel_pos + 1] = (options.txt_color[1] * pixel_value + buf[pixel_pos + 1] * (255 - pixel_value)) / 255;
-            buf[pixel_pos + 2] = (options.txt_color[2] * pixel_value + buf[pixel_pos + 2] * (255 - pixel_value)) / 255;
+            int idx = (pixel_y * options.image_w + pixel_x) * 3;
+
+            if(idx + 2 >= options.image_w * options.image_h * 3 || idx < 0) continue;
+            buf[idx + 0] = (options.txt_color[0] * pixel_value + buf[idx + 0] * (255 - pixel_value)) / 255;
+            buf[idx + 1] = (options.txt_color[1] * pixel_value + buf[idx + 1] * (255 - pixel_value)) / 255;
+            buf[idx + 2] = (options.txt_color[2] * pixel_value + buf[idx + 2] * (255 - pixel_value)) / 255;
           }
         }
       }
