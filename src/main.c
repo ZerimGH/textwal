@@ -83,6 +83,7 @@ int render(const char *text, Options options) {
     }
   }
   total_width = max_line_len * options.font_size / 2;
+  if(cur_line_len > max_line_len) max_line_len = cur_line_len;
 
   // Calculate starting x and y positions
   // int y_start = (options.image_h - total_height) / 2;
