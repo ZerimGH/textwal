@@ -206,35 +206,42 @@ int parse_options(Options *out, int argc, char *argv[]) {
 char *get_text(void) {
   size_t alloced = 1024;
   char *input_text = malloc(sizeof(char) * alloced);
+
   printf("%p\n", (void *)input_text);
-  if(!input_text) {
+
+  if (!input_text) {
     PERROR("malloc() failed.\n");
     return NULL;
   }
-  size_t written = 0;
 
+  size_t written = 0;
   char c;
-  while((c = getchar()) && c != EOF) {
+
+  while ((c = getchar()) && c != EOF) {
     printf("%c", c);
-    if(written + 1 >= alloced) {
-      printf("RESIZEING\n");
+    if (written + 1 >= alloced) {
+      printf("RESIZING\n");
       alloced *= 2;
       char *new = realloc(input_text, sizeof(char) * alloced);
-      if(!new) {
+      if (!new) {
         PERROR("realloc() failed.\n");
         free(input_text);
         return NULL;
       }
+      input_text = new;
     }
     input_text[written++] = c;
   }
-  if(written = 0) {
+
+  if (written == 0) {
     free(input_text);
     return NULL;
   }
+
   input_text[written] = '\0';
   return input_text;
 }
+
 
 void print_help(void) {
   printf("Usage: textwal [OPTIONS] < input_text.txt\n");
