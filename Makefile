@@ -11,7 +11,7 @@ $(OUT_DIR):
 	mkdir -p $(OUT_DIR)
 
 $(OUT): $(SRCS) $(HDRS) $(OUT_DIR)
-	$(CC) $(SRCS) -o $(OUT) $(CFLAGS) $(CINCLUDES) -lfreetype
+	$(CC) $(SRCS) -o $(OUT) $(CFLAGS) $(CINCLUDES) -lfreetype -lm
 
 all: $(OUT)
 

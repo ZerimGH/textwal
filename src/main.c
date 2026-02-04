@@ -9,6 +9,10 @@
 #include <string.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+#define STB_IMAGE_RESIZE2_IMPLEMENTATION
+#include <stb_image_resize2.h>
 
 #define DEFAULT_FONT
 #define DEFAULT_FONT_SIZE 48
@@ -46,6 +50,7 @@ typedef struct {
   color txt_color;
   TextAlign text_align;
   CharAlign char_align;
+  const char *bg_img;
 } Options;
 
 int render(const char *text, Options options) {
@@ -87,6 +92,25 @@ int render(const char *text, Options options) {
     buf[i * 3 + 1] = options.bg_color[1];
     buf[i * 3 + 2] = options.bg_color[2];
   }
+
+  // Background image
+  if(options.bg_img) {
+    if (options.bg_img) {
+      int img_w, img_h, img_channels;
+
+      unsigned char *img = stbi_load(options.bg_img, &img_w, &img_h, &img_channels, 3);
+
+      if (!img) {
+        PERROR("Failed to load background image %s. Defaulting to solid color\n", options.bg_img);
+        goto bg_err;
+      }
+
+      stbir_resize_uint8_linear(img, img_w, img_h, 0, buf, options.image_w, options.image_h, 0, (stbir_pixel_layout)3);
+
+      stbi_image_free(img);
+    }
+  }
+bg_err:
 
   // Calculate total height and width of text rendered
   int total_height = 0;
@@ -250,11 +274,12 @@ int parse_options(Options *out, int argc, char *argv[]) {
     {"output", required_argument, NULL, 'o'},
     {"text-align", required_argument, NULL, 'A'},
     {"char-align", required_argument, NULL, 'a'},
+    {"bg_img", required_argument, NULL, 'i'},
     {"help", no_argument, NULL, 1},
     {NULL, 0, NULL, 0}};
 
   int opt;
-  while((opt = getopt_long(argc, argv, "f:b:t:s:w:h:o:A:a:", long_options, NULL)) != -1) {
+  while((opt = getopt_long(argc, argv, "f:b:t:s:w:h:o:A:a:i:", long_options, NULL)) != -1) {
     switch(opt) {
       case 'A':
         out->text_align = parse_text_align(optarg);
@@ -282,6 +307,9 @@ int parse_options(Options *out, int argc, char *argv[]) {
         break;
       case 'h':
         out->image_h = atoi(optarg);
+        break;
+      case 'i':
+        out->bg_img = optarg;
         break;
       case 1:
         return 2;
@@ -339,8 +367,9 @@ void print_help(void) {
   printf("  -s, --size <size>           Font size (default: %d)\n", DEFAULT_FONT_SIZE);
   printf("  -w, --width <width>         Image width (default: %d)\n", DEFAULT_WIDTH);
   printf("  -h, --height <height>       Image height (default: %d)\n", DEFAULT_HEIGHT);
-  printf("  -A, --text-align <height>   Text box alignment(values: centre, top, bottom, left, right, top-left, top-right, bottom-left, bottom-right)\n");
-  printf("  -A, --char-align <height>   Character alignment within text box (values: left, right)\n");
+  printf("  -A, --text-align <value>    Text box alignment(values: centre, top, bottom, left, right, top-left, top-right, bottom-left, bottom-right)\n");
+  printf("  -a, --char-align <value>    Character alignment within text box (values: left, right)\n");
+  printf("  -i, --bg_img <path>         Path to the image that will be used as the background instead of bg_color\n");
   printf("  --help                      Show this help message\n");
 }
 
@@ -353,7 +382,8 @@ int main(int argc, char *argv[]) {
     .image_h = DEFAULT_HEIGHT,
     .bg_color = {DEFAULT_BACKGROUND_COLOR},
     .txt_color = {DEFAULT_TEXT_COLOR},
-    .text_align = DEFAULT_TEXT_ALIGN
+    .text_align = DEFAULT_TEXT_ALIGN,
+    .bg_img = NULL
   };
 
   switch(parse_options(&options, argc, argv)) {
