@@ -16,6 +16,19 @@
 #define DEFAULT_HEIGHT 1080 
 #define DEFAULT_BACKGROUND_COLOR 255, 255, 255
 #define DEFAULT_TEXT_COLOR 0, 0, 0
+#define DEFAULT_TEXT_ALIGN TA_Centre 
+
+typedef enum {
+  TA_Centre,
+  TA_Left,
+  TA_Right,
+  TA_Top,
+  TA_Bottom,
+  TA_TopRight,
+  TA_TopLeft,
+  TA_BottomRight,
+  TA_BottomLeft
+} TextAlign;
 
 typedef unsigned char color[3];
 
@@ -26,6 +39,7 @@ typedef struct {
   int image_w, image_h;
   color bg_color;
   color txt_color;
+  TextAlign text_align;
 } Options;
 
 int render(const char *text, Options options) {
@@ -90,10 +104,25 @@ int render(const char *text, Options options) {
   int total_width = max_width;
 
 
-  // Calculate starting x and y positions
-  // int y_start = (options.image_h - total_height) / 2;
   int y_start = (options.image_h - total_height) / 2 + (face->size->metrics.ascender >> 6);
   int x_start = (options.image_w - total_width) / 2;
+
+  // Calculate starting x and y positions
+  switch(options.text_align) {
+    case TA_Left:
+      x_start = 0;
+      break;
+    case TA_Right:
+      x_start = options.image_w - total_width;
+      break;
+    case TA_Top:
+      y_start = 0;
+      break;
+    case TA_Bottom:
+      y_start = options.image_h - total_height;
+      break;
+    default: break;
+  }
 
   char *text_copy = strdup(text);
   if(!text_copy) {
@@ -160,6 +189,20 @@ int render(const char *text, Options options) {
   return 0;
 }
 
+TextAlign parse_align(char *s) {
+  if(!s) return -1;
+  if(strcmp(s, "centre") == 0) return TA_Centre;
+  if(strcmp(s, "top") == 0) return TA_Top;
+  if(strcmp(s, "bottom") == 0) return TA_Bottom;
+  if(strcmp(s, "left") == 0) return TA_Left;
+  if(strcmp(s, "right") == 0) return TA_Right;
+  if(strcmp(s, "top-left") == 0) return TA_TopLeft;
+  if(strcmp(s, "top-right") == 0) return TA_TopRight;
+  if(strcmp(s, "bottom-left") == 0) return TA_BottomLeft;
+  if(strcmp(s, "bottom-right") == 0) return TA_BottomRight;
+  return -1;
+}
+
 int parse_options(Options *out, int argc, char *argv[]) {
   if(!out) return 1;
 
@@ -175,8 +218,11 @@ int parse_options(Options *out, int argc, char *argv[]) {
     {NULL, 0, NULL, 0}};
 
   int opt;
-  while((opt = getopt_long(argc, argv, "f:b:t:s:w:h:o:", long_options, NULL)) != -1) {
+  while((opt = getopt_long(argc, argv, "f:b:t:s:w:h:o:a:", long_options, NULL)) != -1) {
     switch(opt) {
+      case 'a':
+        out->text_align = parse_align(optarg);
+        break;
       case 'f':
         out->font_path = optarg;
         break;
@@ -254,6 +300,7 @@ void print_help(void) {
   printf("  -s, --size <size>           Font size (default: %d)\n", DEFAULT_FONT_SIZE);
   printf("  -w, --width <width>         Image width (default: %d)\n", DEFAULT_WIDTH);
   printf("  -h, --height <height>       Image height (default: %d)\n", DEFAULT_HEIGHT);
+  printf("  -A, --text-align <height>   Text box alignment(values: centre, top, bottom, left, right, top-left, top-right, bottom-left, bottom-right)\n");
   printf("  --help                      Show this help message\n");
 }
 
@@ -265,7 +312,8 @@ int main(int argc, char *argv[]) {
     .image_w = DEFAULT_WIDTH,
     .image_h = DEFAULT_HEIGHT,
     .bg_color = {DEFAULT_BACKGROUND_COLOR},
-    .txt_color = {DEFAULT_TEXT_COLOR}
+    .txt_color = {DEFAULT_TEXT_COLOR},
+    .text_align = DEFAULT_TEXT_ALIGN
   };
 
   switch(parse_options(&options, argc, argv)) {
