@@ -268,6 +268,7 @@ int main(int argc, char *argv[]) {
 
   // Get text and render
   char *input_text = get_text();
+  printf("TEXT TO RENDER:\n%s\n", input_text);
   if(!input_text) {
     PERROR("Failed to get input text from stdin.\n");
     return 1;
