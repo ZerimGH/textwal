@@ -16,7 +16,7 @@ $(OUT): $(SRCS) $(HDRS) $(OUT_DIR)
 all: $(OUT)
 
 run: $(OUT)
-	$(OUT) -t '#FF0000' < example.txt
+	$(OUT) < example.txt
 	feh output.png
 
 clean:
