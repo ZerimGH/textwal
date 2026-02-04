@@ -119,7 +119,7 @@ int render(const char *text, Options options) {
       y_start = face->size->metrics.ascender >> 6;
       break;
     case TA_Bottom:
-      y_start = options.image_h - total_height + face->size->metrics.ascender >> 6;
+      y_start = options.image_h - total_height - face->size->metrics.ascender >> 6;
       break;
     default: break;
   }
