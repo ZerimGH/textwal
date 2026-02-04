@@ -215,6 +215,7 @@ char *get_text(void) {
 
   char c;
   while((c = getchar()) && c != EOF) {
+    printf("%c", c);
     if(written + 1 >= alloced) {
       printf("RESIZEING\n");
       alloced *= 2;
