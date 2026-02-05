@@ -17,9 +17,6 @@ $(OUT): $(SRCS) $(HDRS) $(OUT_DIR)
 
 all: $(OUT)
 
-install: $(OUT)
-	sudo cp $(OUT) $(INSTALL_DIR)/textwal
-
 clean:
 	rm -rf $(OUT_DIR)
 
