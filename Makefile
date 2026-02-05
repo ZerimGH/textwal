@@ -7,6 +7,8 @@ CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -O3 
 CINCLUDES = -I./freetype/include -I ./stb
 
+INSTALL_DIR=/usr/local/bin
+
 $(OUT_DIR):
 	mkdir -p $(OUT_DIR)
 
@@ -16,7 +18,7 @@ $(OUT): $(SRCS) $(HDRS) $(OUT_DIR)
 all: $(OUT)
 
 install: $(OUT)
-	sudo cp $(OUT) /usr/local/bin/textwal
+	sudo cp $(OUT) $(INSTALL_DIR)/textwal
 
 clean:
 	rm -rf $(OUT_DIR)

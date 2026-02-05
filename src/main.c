@@ -189,7 +189,9 @@ bg_err:
   while(line) {
     int line_len = strlen(line);
     for(int i = 0; line[i] != '\0'; i++) {
-      FT_UInt glyph_index = FT_Get_Char_Index(face, line[ra ? (line_len - 1 - i) : (i)]);
+      char c = line[ra ? (line_len - 1 - i) : (i)]; 
+      putchar(c);
+      FT_UInt glyph_index = FT_Get_Char_Index(face, c);
 
       if(FT_Load_Glyph(face, glyph_index, FT_LOAD_RENDER | FT_LOAD_NO_HINTING)) {
         continue;
