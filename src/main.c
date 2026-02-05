@@ -51,6 +51,7 @@ typedef struct {
   TextAlign text_align;
   CharAlign char_align;
   const char *bg_img;
+  float text_opacity; // 0 -> 1
 } Options;
 
 int render(const char *text, Options options) {
@@ -200,7 +201,7 @@ bg_err:
       // Write character to image
       for(int row = 0; row < bitmap->rows; row++) {
         for(int col = 0; col < bitmap->width; col++) {
-          unsigned char pixel_value = bitmap->buffer[row * bitmap->width+ col];
+          unsigned char pixel_value = (unsigned char)((float)bitmap->buffer[row * bitmap->width+ col] * options.text_opacity);
           if(pixel_value) {
             int pixel_x =  x + col;
             int pixel_y = (glyph_baseline_y - (bitmap->rows - 1 - row));
@@ -273,11 +274,12 @@ int parse_options(Options *out, int argc, char *argv[]) {
     {"text-align", required_argument, NULL, 'A'},
     {"char-align", required_argument, NULL, 'a'},
     {"bg_img", required_argument, NULL, 'i'},
+    {"opacity", required_argument, NULL, 'p'},
     {"help", no_argument, NULL, 1},
     {NULL, 0, NULL, 0}};
 
   int opt;
-  while((opt = getopt_long(argc, argv, "f:b:t:s:w:h:o:A:a:i:", long_options, NULL)) != -1) {
+  while((opt = getopt_long(argc, argv, "f:b:t:s:w:h:o:A:a:i:p:", long_options, NULL)) != -1) {
     switch(opt) {
       case 'A':
         out->text_align = parse_text_align(optarg);
@@ -308,6 +310,11 @@ int parse_options(Options *out, int argc, char *argv[]) {
         break;
       case 'i':
         out->bg_img = optarg;
+        break;
+      case 'p':
+        sscanf(optarg, "%f", &out->text_opacity);
+        if(out->text_opacity > 1.f) out->text_opacity = 1.f;
+        if(out->text_opacity < 0.f) out->text_opacity = 0.f;
         break;
       case 1:
         return 2;
@@ -368,6 +375,7 @@ void print_help(void) {
   printf("  -A, --text-align <value>    Text box alignment(values: centre, top, bottom, left, right, top-left, top-right, bottom-left, bottom-right)\n");
   printf("  -a, --char-align <value>    Character alignment within text box (values: left, right)\n");
   printf("  -i, --bg_img <path>         Path to the image that will be used as the background instead of bg_color\n");
+  printf("  -p, --opacity <value>       The opacity of the text from 0 to 1, (e.g., 0.5 for half opacity)\n");
   printf("  --help                      Show this help message\n");
 }
 
@@ -381,7 +389,8 @@ int main(int argc, char *argv[]) {
     .bg_color = {DEFAULT_BACKGROUND_COLOR},
     .txt_color = {DEFAULT_TEXT_COLOR},
     .text_align = DEFAULT_TEXT_ALIGN,
-    .bg_img = NULL
+    .bg_img = NULL,
+    .text_opacity = 1.0
   };
 
   switch(parse_options(&options, argc, argv)) {
